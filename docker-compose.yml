@@ -1,0 +1,17 @@
+services:
+  app:
+    build: .
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    volumes:
+      - ./srt_files:/app/srt_files:ro
+      - app-data:/app/data
+    env_file:
+      - .env
+    environment:
+      - SRT_DIR=/app/srt_files
+      - DB_PATH=/app/data/subtitles.db
+    restart: unless-stopped
+
+volumes:
+  app-data:

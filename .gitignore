@@ -1,0 +1,28 @@
+# Data — subtitles and database are not open-source
+srt_files/
+video_files/
+app/data/
+
+# Utility scripts
+tools/
+
+# Environment
+.env
+.venv/
+__pycache__/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
+
+# Claude Code
+.claude/
