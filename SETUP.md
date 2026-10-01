@@ -49,9 +49,27 @@ The app ingests the SRT files on first startup and is available at `http://local
 
 ## Re-ingesting Subtitles
 
-If you update or add SRT files, remove the existing database volume and restart:
+Ingestion skips episodes already in the database, so **adding** a new SRT file only
+needs a restart:
+
+```bash
+docker compose restart
+```
+
+**Changing** an existing episode's SRT requires dropping the data volume, because
+that episode is already recorded and would otherwise be skipped:
 
 ```bash
 docker compose down -v
 docker compose up -d --build
+```
+
+The app re-ingests automatically on the next startup — it detects the empty
+database and rebuilds it. Expect the first request after a wipe to wait for that
+(roughly a minute for ~27k subtitles).
+
+To re-ingest without restarting the container:
+
+```bash
+docker compose exec app python -m app.ingest
 ```

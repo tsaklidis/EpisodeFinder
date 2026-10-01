@@ -17,7 +17,7 @@ Drop in your `.srt` files, spin up the Docker container, and start searching.
 
 ## How Search Works
 
-1. On startup, the app parses all `.srt` files and ingests them into a SQLite database with an [FTS5 virtual table](https://www.sqlite.org/fts5.html) for full-text indexing.
+1. On startup, if the database is empty, the app parses all `.srt` files and ingests them into SQLite with an [FTS5 virtual table](https://www.sqlite.org/fts5.html) for full-text indexing. When the database is already populated, startup is a no-op; if the data is present but the FTS index is missing, only the index is rebuilt.
 
 2. When a user searches, the query is split into words and each word becomes a prefix match (`"word"*`). This means typing `φαντ` will match `φαντάζεσαι`, `φανταστικό`, etc.
 

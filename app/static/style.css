@@ -8,6 +8,7 @@
     --blue-deep: #0d1b4a;
     --blue-mid: #162557;
     --blue-light: #1e3270;
+    --blue-ink: #091239;
     --gold: #d4a830;
     --gold-light: #e8c45a;
     --gold-dim: #a07d1c;
@@ -21,6 +22,21 @@
     --warm-white: #fdf8ef;
     --highlight: #fff3c4;
     --highlight-text: #7a5e00;
+
+    /* Sans for metadata and UI chrome — the serif carries the dialogue,
+       the sans carries everything that is machinery. */
+    --sans: ui-sans-serif, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Monaco, "Courier New", monospace;
+
+    --radius: 12px;
+    --radius-sm: 8px;
+
+    --shadow-sm: 0 1px 2px rgba(5, 10, 32, 0.28);
+    --shadow-md: 0 2px 4px rgba(5, 10, 32, 0.2), 0 8px 20px rgba(5, 10, 32, 0.28);
+    --shadow-lg: 0 2px 6px rgba(5, 10, 32, 0.24), 0 16px 40px rgba(5, 10, 32, 0.36);
+
+    --rule: rgba(212, 168, 48, 0.22);
+    --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 body {
@@ -30,82 +46,100 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+/* Faint vignette so the deep navy reads as a lit surface, not flat fill. */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+        radial-gradient(1100px 620px at 50% -10%, rgba(212, 168, 48, 0.09), transparent 70%),
+        radial-gradient(900px 600px at 50% 110%, rgba(9, 18, 57, 0.6), transparent 70%);
+}
+
+body > * {
+    position: relative;
+    z-index: 1;
+}
+
+::selection {
+    background: rgba(212, 168, 48, 0.3);
+    color: var(--warm-white);
 }
 
 /* ─── Hero / Header ──────────────────────────────────────────────────────── */
 
 .hero {
-    background: linear-gradient(180deg, #071238 0%, var(--blue-deep) 100%);
-    padding: 40px 20px 32px;
+    background:
+        linear-gradient(180deg, var(--blue-ink) 0%, var(--blue-deep) 100%);
+    padding: 52px 20px 44px;
     text-align: center;
+    border-bottom: 1px solid rgba(212, 168, 48, 0.14);
 }
 
 .hero-frame {
     display: inline-block;
-    border: 3px solid var(--gold);
-    border-radius: 4px;
-    padding: 20px 40px 16px;
     position: relative;
-    box-shadow:
-        inset 0 0 20px rgba(212, 168, 48, 0.08),
-        0 0 30px rgba(212, 168, 48, 0.1);
+    padding: 22px 46px 18px;
+    border: 1px solid rgba(212, 168, 48, 0.55);
+    border-radius: 2px;
 }
 
-.hero-frame::before,
-.hero-frame::after {
+/* Inner hairline — the doubled rule is what reads as "vintage plate" while
+   staying far lighter than a single thick border. */
+.hero-frame::before {
     content: "";
     position: absolute;
-    width: 12px;
-    height: 12px;
-    border: 2px solid var(--gold);
-}
-.hero-frame::before {
-    top: 6px;
-    left: 6px;
-    border-right: none;
-    border-bottom: none;
-}
-.hero-frame::after {
-    bottom: 6px;
-    right: 6px;
-    border-left: none;
-    border-top: none;
+    inset: 5px;
+    border: 1px solid rgba(212, 168, 48, 0.2);
+    border-radius: 1px;
+    pointer-events: none;
 }
 
 h1 {
     font-family: "Cormorant Garamond", Georgia, serif;
-    font-size: 2rem;
-    font-weight: 700;
+    font-size: clamp(1.6rem, 5.2vw, 2.4rem);
+    font-weight: 600;
     color: var(--gold);
-    letter-spacing: 0.02em;
-    line-height: 1.3;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    letter-spacing: 0.04em;
+    line-height: 1.22;
+    text-shadow: 0 2px 14px rgba(5, 10, 32, 0.55);
 }
 
 h1 .ampersand {
     font-style: italic;
     font-weight: 400;
-    font-size: 1.3rem;
+    font-size: 0.58em;
     color: var(--gold-light);
-    opacity: 0.8;
-    margin: 0 4px;
+    opacity: 0.75;
+    margin: 0 6px;
+    vertical-align: 0.08em;
 }
 
 .tagline {
+    margin-top: 12px;
+    font-family: var(--sans);
+    font-size: 0.64rem;
+    font-weight: 500;
+    font-style: normal;
     color: var(--gold-dim);
-    font-size: 0.85rem;
-    margin-top: 8px;
-    font-style: italic;
-    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    text-indent: 0.3em;
 }
 
 /* ─── Main content ───────────────────────────────────────────────────────── */
 
 .container {
-    max-width: 720px;
+    max-width: 760px;
     width: 100%;
     margin: 0 auto;
-    padding: 28px 20px 40px;
+    padding: 36px 20px 48px;
     flex: 1;
 }
 
@@ -113,76 +147,129 @@ h1 .ampersand {
 
 .search-box {
     position: relative;
-    margin-bottom: 24px;
+    margin-bottom: 30px;
 }
 
 .search-icon {
     position: absolute;
-    left: 16px;
+    left: 18px;
     top: 50%;
     transform: translateY(-50%);
     color: var(--brown-muted);
     display: flex;
     align-items: center;
+    opacity: 0.75;
+    transition: opacity 0.2s var(--ease), color 0.2s var(--ease);
+    pointer-events: none;
+}
+
+.search-box:focus-within .search-icon {
+    opacity: 1;
+    color: var(--brown);
 }
 
 .search-box input {
     width: 100%;
-    padding: 14px 18px 14px 46px;
+    padding: 17px 20px 17px 50px;
     font-family: "Cormorant Garamond", Georgia, serif;
-    font-size: 1.05rem;
-    background: var(--cream);
-    border: 2px solid var(--cream-dark);
-    border-radius: 8px;
+    font-size: 1.12rem;
+    background: linear-gradient(180deg, var(--warm-white) 0%, var(--cream) 100%);
+    border: 1px solid var(--cream-dark);
+    border-radius: var(--radius);
     color: var(--brown);
     outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-md);
+    transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
 }
 
 .search-box input:focus {
     border-color: var(--gold);
-    box-shadow: 0 2px 12px rgba(212, 168, 48, 0.2);
+    box-shadow: var(--shadow-md), 0 0 0 3px rgba(212, 168, 48, 0.22);
 }
 
 .search-box input::placeholder {
     color: var(--brown-muted);
     font-style: italic;
+    opacity: 0.8;
 }
 
 .search-box input.input-reject {
     border-color: #c0392b;
-    box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.15);
+    box-shadow: var(--shadow-md), 0 0 0 3px rgba(192, 57, 43, 0.18);
 }
 
-/* Positioned out of flow so the hint never changes .search-box height —
-   otherwise the absolutely centred .search-icon drifts down once a hint shows. */
+/* Lives outside .search-box, so it can take real layout space without
+   shifting the absolutely-centred search icon. */
 .input-hint {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    margin-top: 6px;
-    padding-left: 46px;
-    font-size: 0.78rem;
-    color: #c0392b;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    margin: -16px 0 22px;
+    padding: 12px 16px;
+    border: 1px solid rgba(224, 122, 95, 0.5);
+    border-left: 3px solid #e07a5f;
+    border-radius: var(--radius-sm);
+    background: rgba(224, 122, 95, 0.12);
+    font-family: var(--sans);
+    font-size: 0.86rem;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+    color: #f6c8bc;
 }
 
 .input-hint.visible {
-    opacity: 1;
+    display: flex;
+    animation: hint-in 0.25s var(--ease);
+}
+
+/* Warning glyph, so the message reads as an alert at a glance. */
+.input-hint.visible::before {
+    content: "!";
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #e07a5f;
+    color: var(--blue-ink);
+    font-weight: 700;
+    font-size: 0.78rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes hint-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: none; }
 }
 
 /* ─── Stats ──────────────────────────────────────────────────────────────── */
 
-.stats {
-    text-align: center;
+.stats:not(:empty) {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 22px;
+    font-family: var(--sans);
+    font-size: 0.68rem;
+    font-weight: 500;
     color: var(--gold-dim);
-    font-size: 0.82rem;
-    margin-bottom: 20px;
-    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+}
+
+/* Hairline rules flanking the count — editorial, and it gives the column
+   a visible width without adding a box. */
+.stats:not(:empty)::before,
+.stats:not(:empty)::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--rule));
+}
+
+.stats:not(:empty)::after {
+    background: linear-gradient(90deg, var(--rule), transparent);
 }
 
 /* ─── Results ────────────────────────────────────────────────────────────── */
@@ -190,46 +277,108 @@ h1 .ampersand {
 .results {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 16px;
 }
 
 .result-card {
-    background: var(--cream);
-    border: 1px solid var(--cream-dark);
-    border-radius: 6px;
+    position: relative;
     display: flex;
+    background: var(--cream);
+    border: 1px solid rgba(74, 53, 32, 0.1);
+    border-radius: var(--radius);
     overflow: hidden;
-    transition: box-shadow 0.2s, transform 0.15s;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition:
+        box-shadow 0.25s var(--ease),
+        transform 0.25s var(--ease),
+        border-color 0.25s var(--ease);
+}
+
+/* Paper grain — pure CSS, no image request, and invisible until you look. */
+.result-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.4;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(74, 53, 32, 0.016) 0px,
+        rgba(74, 53, 32, 0.016) 1px,
+        transparent 1px,
+        transparent 3px
+    );
 }
 
 .result-card:hover {
-    box-shadow: 0 4px 16px rgba(212, 168, 48, 0.2);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    border-color: rgba(212, 168, 48, 0.4);
+    box-shadow: var(--shadow-lg);
+}
+
+.result-card.expanded {
+    border-color: rgba(212, 168, 48, 0.5);
+    box-shadow: var(--shadow-lg);
 }
 
 .card-side {
-    background: var(--blue-mid);
+    position: relative;
+    background: linear-gradient(170deg, var(--blue-light) 0%, var(--blue-mid) 55%, var(--blue-deep) 100%);
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    min-width: 62px;
-    padding: 16px 8px;
+    /* Top-aligned, not centred: on an expanded card the rail grows tall and a
+       centred number drifts away from the title it labels. */
+    justify-content: flex-start;
+    gap: 3px;
+    min-width: 74px;
+    padding: 17px 10px 18px;
     flex-shrink: 0;
+}
+
+/* Micro-label above the number: says what the digit means without a tooltip. */
+.card-side::before {
+    content: "ΕΠ.";
+    font-family: var(--sans);
+    font-size: 0.5rem;
+    font-weight: 600;
+    color: var(--gold-dim);
+    letter-spacing: 0.18em;
+    text-indent: 0.18em;
+    opacity: 0.85;
+}
+
+/* Gold hairline joining the rail to the page. */
+.card-side::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 1px;
+    background: linear-gradient(
+        180deg,
+        transparent,
+        rgba(212, 168, 48, 0.5) 25%,
+        rgba(212, 168, 48, 0.5) 75%,
+        transparent
+    );
 }
 
 .ep-number {
     font-family: "Cormorant Garamond", Georgia, serif;
-    font-size: 1.7rem;
-    font-weight: 700;
+    font-size: 1.85rem;
+    font-weight: 600;
     color: var(--gold);
     line-height: 1;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    font-variant-numeric: lining-nums tabular-nums;
+    text-shadow: 0 2px 10px rgba(5, 10, 32, 0.5);
 }
 
 .card-body {
     flex: 1;
-    padding: 14px 18px;
+    padding: 16px 20px 18px;
     min-width: 0;
 }
 
@@ -237,82 +386,88 @@ h1 .ampersand {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    gap: 12px;
+    gap: 14px;
 }
 
 .episode-title {
     color: var(--blue-deep);
-    font-size: 1.05rem;
-    font-weight: 700;
-    letter-spacing: 0.01em;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.005em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .timestamp {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
     color: var(--brown-muted);
-    font-size: 0.75rem;
-    font-family: "SF Mono", Monaco, "Courier New", monospace;
+    background: rgba(74, 53, 32, 0.06);
+    padding: 3px 8px;
+    border-radius: 999px;
     white-space: nowrap;
     flex-shrink: 0;
 }
 
 .card-divider {
     height: 1px;
-    background: linear-gradient(90deg, var(--gold) 0%, var(--cream-dark) 60%, transparent 100%);
-    margin: 10px 0;
-    opacity: 0.6;
+    margin: 11px 0 10px;
+    background: linear-gradient(
+        90deg,
+        rgba(212, 168, 48, 0.75) 0%,
+        rgba(74, 53, 32, 0.14) 38%,
+        transparent 100%
+    );
 }
 
 .result-text {
     color: var(--brown);
-    font-size: 1.05rem;
-    line-height: 1.65;
+    font-size: 1.08rem;
+    line-height: 1.68;
 }
 
+/* Highlight sits under the baseline like a marker stripe rather than a
+   filled box — keeps the line readable when several words match. */
 .result-text mark {
-    background: linear-gradient(180deg, transparent 55%, var(--highlight) 55%);
+    background: linear-gradient(180deg, transparent 58%, var(--highlight) 58%);
     color: var(--brown);
-    border-radius: 0;
-    padding: 0 1px;
+    padding: 0 2px;
     font-weight: 700;
+    border-radius: 2px;
 }
 
 .speaker-tag {
+    font-family: var(--sans);
+    font-size: 0.62rem;
+    font-weight: 600;
     color: var(--gold-dim);
-    font-size: 0.75rem;
-    font-weight: 700;
-    margin-bottom: 6px;
+    margin-bottom: 7px;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.14em;
 }
 
-.result-card {
-    cursor: pointer;
-}
-
-.result-card.expanded {
-    box-shadow: 0 4px 16px rgba(212, 168, 48, 0.2);
-}
+/* ─── Context panel ──────────────────────────────────────────────────────── */
 
 .context-panel:empty {
     display: none;
 }
 
 .context-panel {
-    margin-top: 12px;
-    padding-top: 10px;
-    border-top: 1px solid var(--cream-dark);
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed rgba(74, 53, 32, 0.18);
 }
 
 .context-line {
     display: flex;
-    gap: 12px;
-    padding: 5px 8px;
-    border-radius: 3px;
-    font-size: 0.92rem;
-    line-height: 1.55;
+    gap: 14px;
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    line-height: 1.58;
     color: var(--brown-muted);
 }
 
@@ -320,30 +475,34 @@ h1 .ampersand {
     background: var(--highlight);
     color: var(--brown);
     font-weight: 600;
+    box-shadow: inset 2px 0 0 var(--gold);
 }
 
 .context-ts {
-    font-family: "SF Mono", Monaco, "Courier New", monospace;
-    font-size: 0.72rem;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    font-variant-numeric: tabular-nums;
     color: var(--brown-muted);
     white-space: nowrap;
-    padding-top: 3px;
+    padding-top: 4px;
     flex-shrink: 0;
     opacity: 0.7;
 }
 
 .context-speaker {
-    font-weight: 700;
+    font-family: var(--sans);
+    font-weight: 600;
     color: var(--gold-dim);
-    font-size: 0.8rem;
+    font-size: 0.68rem;
     text-transform: uppercase;
+    letter-spacing: 0.1em;
 }
 
 .context-loading {
     text-align: center;
     color: var(--brown-muted);
     font-style: italic;
-    padding: 8px;
+    padding: 10px;
 }
 
 /* ─── Empty / Loading ────────────────────────────────────────────────────── */
@@ -351,19 +510,20 @@ h1 .ampersand {
 .empty-state {
     text-align: center;
     color: var(--gold-dim);
-    padding: 50px 20px;
-    font-size: 0.92rem;
+    padding: 64px 20px;
+    font-size: 1rem;
 }
 
 .empty-icon {
-    font-size: 2.4rem;
-    margin-bottom: 12px;
-    filter: grayscale(30%);
+    font-size: 2.2rem;
+    margin-bottom: 16px;
+    filter: grayscale(35%);
+    opacity: 0.9;
 }
 
 .empty-hint {
-    margin-top: 10px;
-    font-size: 0.8rem;
+    margin-top: 12px;
+    font-size: 0.86rem;
     color: var(--brown-muted);
     font-style: italic;
 }
@@ -371,7 +531,7 @@ h1 .ampersand {
 .loading {
     text-align: center;
     color: var(--gold-dim);
-    padding: 40px;
+    padding: 52px;
     font-style: italic;
 }
 
@@ -381,28 +541,40 @@ h1 .ampersand {
     display: flex;
     justify-content: center;
     gap: 12px;
-    margin-top: 24px;
+    margin-top: 30px;
 }
 
 .pagination button {
-    padding: 8px 22px;
-    font-family: "Cormorant Garamond", Georgia, serif;
-    background: var(--blue-mid);
-    border: 1px solid var(--blue-light);
-    border-radius: 4px;
+    padding: 10px 26px;
+    font-family: var(--sans);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(212, 168, 48, 0.3);
+    border-radius: 999px;
     color: var(--gold-light);
-    font-size: 0.82rem;
     cursor: pointer;
-    transition: background 0.2s, box-shadow 0.2s;
+    transition:
+        background 0.2s var(--ease),
+        border-color 0.2s var(--ease),
+        transform 0.15s var(--ease);
 }
 
 .pagination button:hover:not(:disabled) {
-    background: var(--blue-light);
-    box-shadow: 0 2px 8px rgba(212, 168, 48, 0.15);
+    background: rgba(212, 168, 48, 0.12);
+    border-color: var(--gold);
+    transform: translateY(-1px);
+}
+
+.pagination button:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
 }
 
 .pagination button:disabled {
-    opacity: 0.35;
+    opacity: 0.3;
     cursor: default;
 }
 
@@ -410,42 +582,172 @@ h1 .ampersand {
 
 .footer {
     text-align: center;
-    padding: 20px;
+    padding: 36px 20px 40px;
     color: var(--gold-dim);
     font-size: 0.72rem;
     letter-spacing: 0.06em;
-    opacity: 0.6;
+    border-top: 1px solid rgba(212, 168, 48, 0.12);
+}
+
+.footer-title {
+    margin-top: 20px;
+    font-family: var(--sans);
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    opacity: 0.55;
+}
+
+/* Legal notice must stay legible — deliberately not faded like the rest
+   of the footer. */
+.footer-notice {
+    max-width: 620px;
+    margin: 0 auto;
+    font-size: 0.86rem;
+    line-height: 1.65;
+    letter-spacing: 0.01em;
+    color: var(--cream-dark);
+    opacity: 0.85;
+}
+
+.legal {
+    max-width: 620px;
+    margin: 12px auto 0;
+    text-align: left;
+}
+
+.legal summary {
+    cursor: pointer;
+    text-align: center;
+    font-family: var(--sans);
+    font-size: 0.68rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    padding: 8px;
+    border-radius: var(--radius-sm);
+    transition: color 0.2s var(--ease);
+}
+
+.legal summary:hover {
+    color: var(--gold-light);
+}
+
+.legal summary:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+}
+
+.legal-body {
+    margin-top: 12px;
+    padding: 20px 22px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(212, 168, 48, 0.22);
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+    line-height: 1.72;
+    letter-spacing: 0.01em;
+    color: var(--cream-dark);
+}
+
+.legal-body p {
+    margin-bottom: 10px;
+}
+
+.legal-body p:last-child {
+    margin-bottom: 0;
+}
+
+.legal-h {
+    margin-top: 18px;
+    font-family: var(--sans);
+    font-size: 0.66rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+}
+
+.legal-body ul {
+    margin: 0 0 10px 18px;
+}
+
+.legal-body li {
+    margin-bottom: 6px;
+}
+
+.legal-body a {
+    color: var(--gold-light);
+}
+
+.legal-contact {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(212, 168, 48, 0.18);
 }
 
 /* ─── Mobile ─────────────────────────────────────────────────────────────── */
 
 @media (max-width: 600px) {
     .hero {
-        padding: 28px 16px 24px;
+        padding: 34px 16px 28px;
     }
     .hero-frame {
-        padding: 14px 20px 12px;
+        padding: 16px 22px 14px;
     }
-    h1 {
-        font-size: 1.35rem;
-    }
-    h1 .ampersand {
-        font-size: 1rem;
+    .tagline {
+        letter-spacing: 0.22em;
+        font-size: 0.6rem;
     }
     .container {
-        padding: 20px 16px 32px;
+        padding: 24px 16px 36px;
+    }
+    .search-box input {
+        padding: 15px 16px 15px 46px;
+        font-size: 1.05rem;
+    }
+    .search-icon {
+        left: 16px;
+    }
+    .input-hint {
+        padding-left: 46px;
     }
     .card-side {
-        min-width: 48px;
-        padding: 12px 6px;
+        min-width: 56px;
+        padding: 14px 7px;
     }
     .ep-number {
-        font-size: 1.35rem;
+        font-size: 1.45rem;
     }
     .card-body {
-        padding: 12px 14px;
+        padding: 13px 15px 15px;
     }
     .episode-title {
-        font-size: 0.95rem;
+        font-size: 1rem;
+    }
+    .result-text {
+        font-size: 1.02rem;
+    }
+    .context-line {
+        gap: 10px;
+        padding: 6px 8px;
+    }
+}
+
+/* ─── Reduced motion ─────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    .result-card:hover,
+    .pagination button:hover:not(:disabled) {
+        transform: none;
     }
 }

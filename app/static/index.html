@@ -7,12 +7,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/style.css?v=3">
 </head>
 <body>
     <header class="hero">
         <div class="hero-frame">
-            <h1>Κωνσταντίνου <span class="ampersand">κ</span> Ελένης</h1>
+            <h1>Κωνσταντίνου <span class="ampersand">κ'</span> Ελένης</h1>
             <p class="tagline">Αναζήτηση φράσης</p>
         </div>
     </header>
@@ -30,8 +30,11 @@
                 autofocus
                 maxlength="100"
             >
-            <div id="inputHint" class="input-hint" role="status" aria-live="polite"></div>
         </div>
+
+        <!-- Outside .search-box on purpose: in here it would change the box's
+             height and push the absolutely-centred search icon off-centre. -->
+        <div id="inputHint" class="input-hint" role="alert" aria-live="assertive"></div>
 
         <div id="stats" class="stats"></div>
         <div id="results" class="results">
@@ -45,9 +48,62 @@
     </main>
 
     <footer class="footer">
-        <span>Κωνσταντίνου και Ελένης - 1998</span>
+        <p class="footer-notice">
+            Ανεπίσημο, μη εμπορικό εγχείρημα. Τα δικαιώματα της σειράς ανήκουν
+            στους νόμιμους δικαιούχους της.
+        </p>
+
+        <details class="legal">
+            <summary>Νομική σημείωση &amp; επικοινωνία</summary>
+            <div class="legal-body">
+                <p>
+                    Ο ιστότοπος αυτός φτιάχτηκε από θαυμαστές της σειράς. Δεν
+                    σχετίζεται, δεν συνεργάζεται και δεν υποστηρίζεται από τους
+                    δημιουργούς, τους παραγωγούς ή τον τηλεοπτικό σταθμό της
+                    σειράς «Κωνσταντίνου και Ελένης».
+                </p>
+                <p>
+                    Η σειρά και οι διάλογοί της προστατεύονται από δικαιώματα
+                    πνευματικής ιδιοκτησίας, τα οποία ανήκουν εξ ολοκλήρου
+                    στους νόμιμους δικαιούχους τους.
+                </p>
+
+                <p class="legal-h">Τι περιέχει ο ιστότοπος</p>
+                <ul>
+                    <li>
+                        Μόνο σύντομα αποσπάσματα από τους διαλόγους, ώστε να
+                        μπορείτε να βρείτε σε ποιο επεισόδιο ειπώθηκε μια φράση.
+                    </li>
+                    <li>Δεν φιλοξενείται ούτε διανέμεται βίντεο ή ήχος.</li>
+                    <li>Δεν υπάρχουν διαφημίσεις και δεν αποκομίζεται κανένα έσοδο.</li>
+                </ul>
+
+                <p class="legal-h">Ακρίβεια των κειμένων</p>
+                <p>
+                    Τα κείμενα παράχθηκαν αυτόματα με λογισμικό αναγνώρισης
+                    ομιλίας και διορθώθηκαν μόνο εν μέρει. Περιέχουν λάθη και
+                    <strong>δεν αποτελούν επίσημη ή πιστή απομαγνητοφώνηση</strong>.
+                    Μην τα χρησιμοποιείτε ως αυθεντική πηγή.
+                </p>
+
+                <p class="legal-h">Είστε δικαιούχος;</p>
+                <p>
+                    Αν θεωρείτε ότι κάποιο περιεχόμενο θίγει τα δικαιώματά σας,
+                    στείλτε μήνυμα στο
+                    <a href="mailto:stefanos@tsaklidis.gr">stefanos@tsaklidis.gr</a>
+                    και θα αφαιρεθεί άμεσα.
+                </p>
+
+                <p class="legal-contact">
+                    Υπεύθυνος επικοινωνίας: Στέφανος Τσακλίδης -
+                    <a href="mailto:stefanos@tsaklidis.gr">stefanos@tsaklidis.gr</a>
+                </p>
+            </div>
+        </details>
+
+        <p class="footer-title">Κωνσταντίνου και Ελένης - 1998</p>
     </footer>
 
-    <script src="/static/app.js"></script>
+    <script src="/static/app.js?v=3"></script>
 </body>
 </html>

@@ -7,7 +7,8 @@ from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
 from app.config import settings
-from app.database import get_db, init_db
+from app.database import get_db
+from app.ingest import ensure_ingested
 from app.schemas import ContextResponse, SearchResponse
 from app.search import get_context, search_subtitles
 from app.security import SecurityMiddleware, validate_query
@@ -15,7 +16,7 @@ from app.security import SecurityMiddleware, validate_query
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    init_db()
+    ensure_ingested()
     yield
 
 

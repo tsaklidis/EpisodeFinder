@@ -4,8 +4,10 @@ import os
 import re
 import unicodedata
 
+from sqlalchemy import text
+
 from app.config import settings
-from app.database import SessionLocal, create_fts, init_db
+from app.database import SessionLocal, create_fts, engine, init_db
 from app.models import Episode, Subtitle
 
 
@@ -122,6 +124,35 @@ def ingest():
     print("Building FTS index...")
     create_fts()
     print(f"\nDone! Ingested {total_subtitles} subtitles from {len(srt_files)} files.")
+
+
+def ensure_ingested():
+    """Populate the database on startup if it is empty or missing its FTS index.
+
+    `docker compose down -v` drops the data volume, so a fresh container comes up
+    with no subtitles. Without this the app starts happily and then returns 500
+    on every search ("no such table: subtitles_fts").
+    """
+    init_db()
+
+    with engine.connect() as conn:
+        has_fts = conn.execute(text(
+            "SELECT 1 FROM sqlite_master "
+            "WHERE type='table' AND name='subtitles_fts'"
+        )).first() is not None
+        count = conn.execute(text("SELECT COUNT(*) FROM subtitles")).scalar() or 0
+
+    if count and has_fts:
+        print(f"Database ready: {count} subtitles indexed.")
+        return
+
+    if count and not has_fts:
+        print("FTS index missing - rebuilding from existing subtitles...")
+        create_fts()
+        return
+
+    print("Empty database - ingesting SRT files...")
+    ingest()
 
 
 if __name__ == "__main__":

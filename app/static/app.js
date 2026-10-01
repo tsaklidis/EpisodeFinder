@@ -13,18 +13,30 @@ let hintTimer = null;
 let currentPage = 1;
 let currentQuery = "";
 
+function showGreekOnlyWarning() {
+    inputHint.textContent =
+        "Μόνο ελληνικά. Γράψτε «Μαρούσι», όχι «marousi».";
+    inputHint.classList.add("visible");
+    searchInput.classList.add("input-reject");
+    clearTimeout(hintTimer);
+    // Long enough to actually read, and it also clears as soon as the next
+    // keystroke is valid Greek.
+    hintTimer = setTimeout(hideGreekOnlyWarning, 6000);
+}
+
+function hideGreekOnlyWarning() {
+    clearTimeout(hintTimer);
+    inputHint.classList.remove("visible");
+    searchInput.classList.remove("input-reject");
+}
+
 searchInput.addEventListener("input", () => {
-    var raw = searchInput.value;
+    const raw = searchInput.value;
     if (!GREEK_RE.test(raw)) {
         searchInput.value = raw.replace(NON_GREEK_RE, "");
-        searchInput.classList.add("input-reject");
-        inputHint.textContent = "Επιτρέπονται μόνο ελληνικοί χαρακτήρες";
-        inputHint.classList.add("visible");
-        clearTimeout(hintTimer);
-        hintTimer = setTimeout(function () {
-            inputHint.classList.remove("visible");
-            searchInput.classList.remove("input-reject");
-        }, 2000);
+        showGreekOnlyWarning();
+    } else if (raw.length > 0) {
+        hideGreekOnlyWarning();
     }
 
     clearTimeout(debounceTimer);
