@@ -155,11 +155,18 @@ h1 .ampersand {
     box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.15);
 }
 
+/* Positioned out of flow so the hint never changes .search-box height —
+   otherwise the absolutely centred .search-icon drifts down once a hint shows. */
 .input-hint {
-    font-size: 0.78rem;
-    color: #c0392b;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
     margin-top: 6px;
     padding-left: 46px;
+    font-size: 0.78rem;
+    color: #c0392b;
+    pointer-events: none;
     opacity: 0;
     transition: opacity 0.3s;
 }

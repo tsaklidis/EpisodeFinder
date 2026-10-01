@@ -2,7 +2,7 @@ services:
   app:
     build: .
     ports:
-      - "${APP_PORT:-8000}:8000"
+      - "127.0.0.1:${APP_PORT:-8000}:8000"
     volumes:
       - ./srt_files:/app/srt_files:ro
       - app-data:/app/data
