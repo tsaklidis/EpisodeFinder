@@ -73,3 +73,58 @@ To re-ingest without restarting the container:
 ```bash
 docker compose exec app python -m app.ingest
 ```
+
+## Statistics
+
+Traffic and search terms both come from the nginx access logs via
+[GoAccess](https://goaccess.io) — the app itself stores nothing about visitors.
+
+GoAccess is already installed on the server. Reading `/var/log/nginx/` needs
+elevated rights, so either prefix with `sudo` or add yourself to the `adm`
+group once:
+
+```bash
+sudo usermod -aG adm $USER   # log out and back in; afterwards no sudo needed
+```
+
+### A report you can open in a browser
+
+```bash
+sudo goaccess /var/log/nginx/access.log --log-format=COMBINED -o ~/report.html
+```
+
+Include the rotated logs for a fuller picture (they cover 14 days):
+
+```bash
+sudo zcat -f /var/log/nginx/access.log* | goaccess --log-format=COMBINED -o ~/report.html -
+```
+
+### A live dashboard
+
+```bash
+sudo goaccess /var/log/nginx/access.log --log-format=COMBINED --real-time-html -o ~/report.html
+```
+
+### Reading search terms
+
+Searches reach nginx as `/api/search?q=...`, so they show up under
+**Requested Files** — but URL-encoded, which makes Greek unreadable
+(`%CE%9C%CE%B1%CF%81%CE%BF%CF%8D%CF%83%CE%B9`). To list the actual terms,
+most-searched first:
+
+```bash
+sudo grep -o '/api/search?q=[^ &"]*' /var/log/nginx/access.log \
+  | sed 's|.*q=||' \
+  | python3 -c "import sys,urllib.parse as u; [print(u.unquote_plus(l.strip())) for l in sys.stdin]" \
+  | sort | uniq -c | sort -rn | head -40
+```
+
+Keep `--log-format=COMBINED` and do **not** pass `-q` / `--no-query-string` to
+GoAccess, or the search terms are stripped from the report.
+
+### Retention and privacy
+
+nginx rotates daily and keeps 14 days (`/etc/logrotate.d/nginx`). These logs
+contain IP addresses, which are personal data under GDPR — that is why the
+site's legal notice discloses them and states the 14-day window. If you change
+the rotation, update the notice in `app/static/index.html` to match.

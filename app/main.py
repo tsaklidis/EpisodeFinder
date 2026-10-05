@@ -1,5 +1,7 @@
+import logging
 import os
 from contextlib import asynccontextmanager
+from logging.handlers import RotatingFileHandler
 
 from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.staticfiles import StaticFiles
@@ -12,6 +14,14 @@ from app.ingest import ensure_ingested
 from app.schemas import ContextResponse, SearchResponse
 from app.search import get_context, search_subtitles
 from app.security import SecurityMiddleware, validate_query
+
+search_logger = logging.getLogger("search")
+search_logger.setLevel(logging.INFO)
+search_logger.propagate = False
+_log_path = os.path.join(os.path.dirname(__file__), "data", "searches.log")
+_handler = RotatingFileHandler(_log_path, maxBytes=5_000_000, backupCount=3)
+_handler.setFormatter(logging.Formatter("%(asctime)s\t%(message)s"))
+search_logger.addHandler(_handler)
 
 
 @asynccontextmanager
@@ -59,6 +69,9 @@ def api_search(
         per_page = settings.results_per_page
 
     results, total = search_subtitles(db, clean, page=page, per_page=per_page)
+
+    if page == 1:
+        search_logger.info("%s\t%d", clean, total)
 
     return SearchResponse(
         query=clean,
