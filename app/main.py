@@ -18,8 +18,9 @@ from app.security import SecurityMiddleware, validate_query
 search_logger = logging.getLogger("search")
 search_logger.setLevel(logging.INFO)
 search_logger.propagate = False
-_log_path = os.path.join(os.path.dirname(__file__), "data", "searches.log")
-_handler = RotatingFileHandler(_log_path, maxBytes=5_000_000, backupCount=3)
+_log_dir = os.path.dirname(settings.db_path)
+os.makedirs(_log_dir, exist_ok=True)
+_handler = RotatingFileHandler(os.path.join(_log_dir, "searches.log"), maxBytes=5_000_000, backupCount=3)
 _handler.setFormatter(logging.Formatter("%(asctime)s\t%(message)s"))
 search_logger.addHandler(_handler)
 
