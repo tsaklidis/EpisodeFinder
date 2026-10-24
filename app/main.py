@@ -11,8 +11,8 @@ from sqlalchemy.orm import Session
 from app.config import settings
 from app.database import get_db
 from app.ingest import ensure_ingested
-from app.schemas import ContextResponse, SearchResponse
-from app.search import get_context, search_subtitles
+from app.schemas import ContextResponse, SearchResponse, StatsResponse
+from app.search import get_context, get_stats, search_subtitles
 from app.security import SecurityMiddleware, validate_query
 
 search_logger = logging.getLogger("search")
@@ -81,6 +81,11 @@ def api_search(
         per_page=per_page,
         results=results,
     )
+
+
+@app.get("/api/stats", response_model=StatsResponse)
+def api_stats(db: Session = Depends(get_db)):
+    return get_stats(db)
 
 
 @app.get("/api/context/{subtitle_id}", response_model=ContextResponse)

@@ -16,7 +16,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/style.css?v=3">
+    <link rel="stylesheet" href="/static/style.css?v=4">
 </head>
 <body>
     <header class="hero">
@@ -54,6 +54,31 @@
             </div>
         </div>
         <div id="pagination" class="pagination"></div>
+
+        <!-- Landing-page only: hidden while a search is showing results. -->
+        <section id="library" class="library" aria-labelledby="libraryTitle" hidden>
+            <h2 id="libraryTitle" class="library-title">Το αρχείο</h2>
+            <div class="plates">
+                <div class="plate">
+                    <span class="plate-value" id="statEpisodes">—</span>
+                    <span class="plate-label">επεισόδια</span>
+                </div>
+                <div class="plate">
+                    <span class="plate-value" id="statLines">—</span>
+                    <span class="plate-label">ατάκες</span>
+                </div>
+                <div class="plate">
+                    <span class="plate-value" id="statHours">—</span>
+                    <span class="plate-label">ώρες διαλόγων</span>
+                </div>
+            </div>
+            <div id="seasons"></div>
+            <div class="library-legend">
+                <span class="legend-item"><span class="legend-swatch on"></span>Διαθέσιμο για αναζήτηση</span>
+                <span class="legend-item"><span class="legend-swatch"></span>Σύντομα</span>
+            </div>
+            <p id="episodeCaption" class="episode-caption" aria-live="polite">Επιλέξτε ένα επεισόδιο για τον τίτλο του</p>
+        </section>
     </main>
 
     <footer class="footer">
@@ -113,6 +138,6 @@
         <p class="footer-title">Κωνσταντίνου και Ελένης - 1998</p>
     </footer>
 
-    <script src="/static/app.js?v=3"></script>
+    <script src="/static/app.js?v=4"></script>
 </body>
 </html>

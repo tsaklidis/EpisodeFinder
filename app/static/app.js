@@ -4,6 +4,9 @@ const statsDiv = document.getElementById("stats");
 const paginationDiv = document.getElementById("pagination");
 
 const inputHint = document.getElementById("inputHint");
+const librarySection = document.getElementById("library");
+const seasonsDiv = document.getElementById("seasons");
+const episodeCaption = document.getElementById("episodeCaption");
 
 const GREEK_RE = /^[Ͱ-Ͽἀ-῿\s]*$/;
 const NON_GREEK_RE = /[^Ͱ-Ͽἀ-῿\s]/g;
@@ -62,6 +65,7 @@ paginationDiv.addEventListener("click", (e) => {
 });
 
 async function doSearch() {
+    librarySection.hidden = !!currentQuery || !librarySection.dataset.ready;
     if (!currentQuery) {
         resultsDiv.innerHTML = '<div class="empty-state"><div class="empty-icon">📺</div><div>Πληκτρολογήστε μια φράση για αναζήτηση</div><div class="empty-hint">π.χ. «αποχετευτικό», «δεσποινίς Βλαχάκη», «Μαρούσι»</div></div>';
         statsDiv.textContent = "";
@@ -175,3 +179,68 @@ function goPage(page) {
     doSearch();
     window.scrollTo({ top: 0, behavior: "smooth" });
 }
+
+// ─── Library: what is indexed ───────────────────────────────────────────────
+
+const CAPTION_DEFAULT = episodeCaption.textContent;
+
+seasonsDiv.addEventListener("click", (e) => {
+    const chip = e.target.closest(".ep-chip");
+    if (!chip) return;
+    seasonsDiv.querySelectorAll(".ep-chip.selected").forEach((c) => c.classList.remove("selected"));
+    chip.classList.add("selected");
+    episodeCaption.innerHTML = chip.dataset.caption;
+});
+
+async function loadLibrary() {
+    try {
+        const resp = await fetch("/api/stats");
+        if (!resp.ok) return;
+        renderLibrary(await resp.json());
+    } catch {
+        // Stats are decoration; the search still works without them.
+    }
+}
+
+function renderLibrary(data) {
+    const byNumber = new Map(data.episodes.map((ep) => [ep.episode_number, ep]));
+    const fmt = new Intl.NumberFormat("el-GR");
+
+    document.getElementById("statEpisodes").innerHTML =
+        data.episodes.length + '<span class="plate-of"> / ' + data.total_episodes + "</span>";
+    document.getElementById("statLines").textContent = fmt.format(data.subtitle_count);
+    document.getElementById("statHours").textContent = fmt.format(Math.round(data.dialogue_minutes / 60));
+
+    seasonsDiv.innerHTML = data.seasons
+        .map((season) => {
+            let chips = "";
+            let available = 0;
+            for (let n = season.first; n <= season.last; n++) {
+                const ep = byNumber.get(n);
+                if (ep) available++;
+                // Titles arrive HTML-escaped from the API, so they are safe
+                // to drop into markup and attributes as-is.
+                const caption = ep
+                    ? '<span class="caption-num">' + n + "</span>" + ep.title
+                        + '<span class="caption-meta">' + fmt.format(ep.lines) + " ατάκες</span>"
+                    : '<span class="caption-num">' + n + "</span>Δεν έχει προστεθεί ακόμα";
+                chips += '<button type="button" class="ep-chip' + (ep ? " on" : "") + '"'
+                    + ' data-caption="' + caption.replace(/&/g, "&amp;").replace(/"/g, "&quot;") + '"'
+                    + ' aria-label="Επεισόδιο ' + n + (ep ? ": " + ep.title : ", μη διαθέσιμο") + '">'
+                    + n + "</button>";
+            }
+            return '<div class="season">'
+                + '<div class="season-head"><span class="season-label">' + season.label + "</span>"
+                + '<span class="season-years">' + season.years + "</span>"
+                + '<span class="season-count">' + available + " / " + (season.last - season.first + 1) + "</span></div>"
+                + '<div class="ep-grid">' + chips + "</div>"
+                + "</div>";
+        })
+        .join("");
+
+    episodeCaption.textContent = CAPTION_DEFAULT;
+    librarySection.dataset.ready = "1";
+    librarySection.hidden = !!currentQuery;
+}
+
+loadLibrary();

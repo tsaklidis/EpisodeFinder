@@ -3,8 +3,16 @@ import html
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.schemas import ContextLine, SearchResult
+from app.schemas import ContextLine, EpisodeSummary, SearchResult, Season, StatsResponse
 from app.security import sanitize_highlight
+
+# The full run per Wikipedia, so the page can show what is still missing —
+# the database only knows about episodes that have been ingested.
+SEASONS = [
+    Season(label="Α' Κύκλος", years="1998–99", first=1, last=33),
+    Season(label="Β' Κύκλος", years="1999–00", first=34, last=68),
+]
+TOTAL_EPISODES = SEASONS[-1].last
 
 
 def search_subtitles(
@@ -82,3 +90,37 @@ def get_context(db: Session, subtitle_id: int, surrounding: int = 2) -> list[Con
         )
         for row in rows
     ]
+
+
+def _srt_seconds(ts: str) -> int:
+    hms = ts.split(",")[0].split(":")
+    return int(hms[0]) * 3600 + int(hms[1]) * 60 + int(hms[2])
+
+
+def get_stats(db: Session) -> StatsResponse:
+    rows = db.execute(text("""
+        SELECT e.episode_number, e.title, COUNT(s.id) AS lines, MAX(s.end_time) AS last_end
+        FROM episodes e
+        JOIN subtitles s ON s.episode_id = e.id
+        GROUP BY e.id
+        ORDER BY e.episode_number
+    """)).mappings().all()
+
+    # Last subtitle's end time stands in for episode length; close enough
+    # for a "hours of dialogue" figure and avoids storing durations.
+    seconds = sum(_srt_seconds(row["last_end"]) for row in rows if row["last_end"])
+
+    return StatsResponse(
+        total_episodes=TOTAL_EPISODES,
+        subtitle_count=sum(row["lines"] for row in rows),
+        dialogue_minutes=seconds // 60,
+        seasons=SEASONS,
+        episodes=[
+            EpisodeSummary(
+                episode_number=row["episode_number"],
+                title=html.escape(row["title"]),
+                lines=row["lines"],
+            )
+            for row in rows
+        ],
+    )

@@ -29,3 +29,24 @@ class ContextLine(BaseModel):
 
 class ContextResponse(BaseModel):
     lines: list[ContextLine]
+
+
+class EpisodeSummary(BaseModel):
+    episode_number: int
+    title: str
+    lines: int
+
+
+class Season(BaseModel):
+    label: str
+    years: str
+    first: int
+    last: int
+
+
+class StatsResponse(BaseModel):
+    total_episodes: int
+    subtitle_count: int
+    dialogue_minutes: int
+    seasons: list[Season]
+    episodes: list[EpisodeSummary]
